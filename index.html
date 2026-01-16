@@ -177,22 +177,30 @@
                 }
             };
 
-            const copyToClipboard = () => {
-                const el = document.createElement('textarea');
-                el.value = output;
-                document.body.appendChild(el);
-                el.select();
-                document.execCommand('copy');
-                document.body.removeChild(el);
+            const copyToClipboard = async () => {
+                try {
+                    await navigator.clipboard.writeText(output);
+                } catch (err) {
+                    // Fallback for older browsers
+                    const el = document.createElement('textarea');
+                    el.value = output;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                }
             };
 
             const downloadMarkdown = () => {
                 const element = document.createElement("a");
                 const file = new Blob([output], {type: 'text/markdown'});
-                element.href = URL.createObjectURL(file);
+                const url = URL.createObjectURL(file);
+                element.href = url;
                 element.download = "cleaned_chat_history.md";
                 document.body.appendChild(element);
                 element.click();
+                document.body.removeChild(element);
+                URL.revokeObjectURL(url);
             };
 
             useEffect(() => {
