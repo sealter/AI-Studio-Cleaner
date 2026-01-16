@@ -45,7 +45,7 @@ Your site will be live in a few moments!
 - **React 18** (via CDN)
 - **Tailwind CSS** (via CDN for styling)
 - **Babel Standalone** (for in-browser JSX compilation)
-- **Lucide React** (for icons)
+- **Inline SVG Icons** (custom lightweight icons)
 
 ## 📄 License
 
