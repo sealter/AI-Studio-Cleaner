@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Studio History Cleaner</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- React & ReactDOM -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
+
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
@@ -74,6 +74,7 @@
         function App() {
             const [files, setFiles] = useState([]);
             const [output, setOutput] = useState("");
+            const [parsedData, setParsedData] = useState([]);
             const [includeThoughts, setIncludeThoughts] = useState(false);
             const [isProcessing, setIsProcessing] = useState(false);
             const [dragActive, setDragActive] = useState(false);
@@ -82,7 +83,7 @@
                 try {
                     const data = JSON.parse(json);
                     let conversation = [];
-                    
+
                     // Handle standard AI Studio export format
                     const chunks = data.chunkedPrompt?.chunks || data.chunks || [];
 
@@ -127,34 +128,19 @@
             const handleFiles = async (fileList) => {
                 setIsProcessing(true);
                 const newFiles = Array.from(fileList);
-                let combinedMarkdown = "";
+                const results = [];
 
                 for (const file of newFiles) {
-                    const text = await file.text();
-                    const conversation = parseAIStudioJSON(text);
-                    
-                    if (conversation) {
-                        combinedMarkdown += `# Source: ${file.name}\n\n`;
-                        
-                        conversation.forEach(msg => {
-                            const roleIcon = msg.role === 'User' ? '👤' : '🤖';
-                            
-                            if (includeThoughts && msg.hasThoughts) {
-                                combinedMarkdown += `> **🧠 Thinking Process**\n> \n`;
-                                const indentedThoughts = msg.thoughts.split('\n').map(line => `> ${line}`).join('\n');
-                                combinedMarkdown += `${indentedThoughts}\n\n`;
-                            }
-
-                            combinedMarkdown += `## ${roleIcon} ${msg.role}\n\n`;
-                            combinedMarkdown += `${msg.content}\n\n`;
-                            combinedMarkdown += `---\n\n`;
-                        });
-                    } else {
-                        combinedMarkdown += `> ⚠️ Error parsing file: ${file.name}\n\n`;
+                    try {
+                        const text = await file.text();
+                        const conversation = parseAIStudioJSON(text);
+                        results.push({ name: file.name, conversation, error: !conversation });
+                    } catch (e) {
+                        results.push({ name: file.name, error: true });
                     }
                 }
 
-                setOutput(combinedMarkdown);
+                setParsedData(results);
                 setFiles(newFiles);
                 setIsProcessing(false);
             };
@@ -204,15 +190,38 @@
             };
 
             useEffect(() => {
-                if (files.length > 0) {
-                    handleFiles(files);
-                }
-            }, [includeThoughts]);
+                let combinedMarkdown = "";
+
+                parsedData.forEach(({ name, conversation, error }) => {
+                    if (error) {
+                        combinedMarkdown += `> ⚠️ Error parsing file: ${name}\n\n`;
+                        return;
+                    }
+
+                    combinedMarkdown += `# Source: ${name}\n\n`;
+
+                    conversation.forEach(msg => {
+                        const roleIcon = msg.role === 'User' ? '👤' : '🤖';
+
+                        if (includeThoughts && msg.hasThoughts) {
+                            combinedMarkdown += `> **🧠 Thinking Process**\n> \n`;
+                            const indentedThoughts = msg.thoughts.split('\n').map(line => `> ${line}`).join('\n');
+                            combinedMarkdown += `${indentedThoughts}\n\n`;
+                        }
+
+                        combinedMarkdown += `## ${roleIcon} ${msg.role}\n\n`;
+                        combinedMarkdown += `${msg.content}\n\n`;
+                        combinedMarkdown += `---\n\n`;
+                    });
+                });
+
+                setOutput(combinedMarkdown);
+            }, [parsedData, includeThoughts]);
 
             return (
                 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 p-6 md:p-12">
                     <div className="max-w-6xl mx-auto space-y-8">
-                        
+
                         {/* Header */}
                         <div className="text-center space-y-2">
                             <h1 className="text-4xl font-bold tracking-tight text-slate-900">
@@ -225,12 +234,12 @@
 
                         {/* Main Grid */}
                         <div className="grid md:grid-cols-3 gap-6 h-[70vh]">
-                            
+
                             {/* Left Column */}
                             <div className="md:col-span-1 flex flex-col gap-6 h-full">
-                                
+
                                 {/* Upload Zone */}
-                                <div 
+                                <div
                                     className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer relative bg-white
                                         ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'}`}
                                     onDragEnter={onDragEnter}
@@ -238,9 +247,9 @@
                                     onDragOver={onDragOver}
                                     onDrop={onDrop}
                                 >
-                                    <input 
-                                        type="file" 
-                                        multiple 
+                                    <input
+                                        type="file"
+                                        multiple
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         onChange={handleInputChange}
                                         accept=".json,.txt"
@@ -258,7 +267,7 @@
                                         <span className="font-medium text-slate-700 flex items-center gap-2">
                                             <span className="text-lg">🧠</span> Thoughts
                                         </span>
-                                        <button 
+                                        <button
                                             onClick={() => setIncludeThoughts(!includeThoughts)}
                                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${includeThoughts ? 'bg-blue-600' : 'bg-slate-200'}`}
                                         >
@@ -275,7 +284,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setOutput("");}} variant="danger" disabled={!output} className="w-full justify-center">
+                                            <Button onClick={() => {setFiles([]); setParsedData([]); setOutput("");}} variant="danger" disabled={!output} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
@@ -303,7 +312,7 @@
 
                                     <div className="flex-1 relative bg-white">
                                         {output ? (
-                                            <textarea 
+                                            <textarea
                                                 className="w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed"
                                                 value={output}
                                                 readOnly
