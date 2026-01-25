@@ -319,19 +319,21 @@
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 relative bg-white">
-                                        {output ? (
+                                    <div className="flex-1 relative bg-white group">
+                                        {output && (
                                             <textarea
-                                                className="w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed"
+                                                className={`w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 ${isProcessing ? 'opacity-50' : ''}`}
                                                 value={output}
                                                 readOnly
+                                                aria-label="Generated Markdown"
                                             />
-                                        ) : (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                                                <div className="bg-slate-50 p-4 rounded-full mb-3">
+                                        )}
+                                        {(!output || isProcessing) && (
+                                            <div className={`absolute inset-0 flex flex-col items-center justify-center text-slate-400 ${output ? 'z-10' : ''}`}>
+                                                <div className="bg-slate-50 p-4 rounded-full mb-3 shadow-sm">
                                                     <Icons.RefreshCw className={`w-6 h-6 ${isProcessing ? 'animate-spin text-blue-500' : ''}`} />
                                                 </div>
-                                                <p>Upload a file to generate Markdown</p>
+                                                {!output && <p>Upload a file to generate Markdown</p>}
                                             </div>
                                         )}
                                     </div>
