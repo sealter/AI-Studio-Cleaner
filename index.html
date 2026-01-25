@@ -28,7 +28,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useMemo } = React;
 
         // --- ICONS (Inline SVGs to avoid complex CDN imports) ---
         const Icon = ({ path, className }) => (
@@ -73,7 +73,6 @@
 
         function App() {
             const [files, setFiles] = useState([]);
-            const [output, setOutput] = useState("");
             const [parsedData, setParsedData] = useState([]);
             const [includeThoughts, setIncludeThoughts] = useState(false);
             const [isProcessing, setIsProcessing] = useState(false);
@@ -189,7 +188,7 @@
                 URL.revokeObjectURL(url);
             };
 
-            useEffect(() => {
+            const output = useMemo(() => {
                 let combinedMarkdown = "";
 
                 parsedData.forEach(({ name, conversation, error }) => {
@@ -215,7 +214,7 @@
                     });
                 });
 
-                setOutput(combinedMarkdown);
+                return combinedMarkdown;
             }, [parsedData, includeThoughts]);
 
             return (
@@ -284,7 +283,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setParsedData([]); setOutput("");}} variant="danger" disabled={!output} className="w-full justify-center">
+                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
