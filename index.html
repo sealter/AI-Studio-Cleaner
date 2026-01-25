@@ -28,7 +28,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useMemo } = React;
 
         // --- ICONS (Inline SVGs to avoid complex CDN imports) ---
         const Icon = ({ path, className }) => (
@@ -73,7 +73,6 @@
 
         function App() {
             const [files, setFiles] = useState([]);
-            const [output, setOutput] = useState("");
             const [parsedData, setParsedData] = useState([]);
             const [includeThoughts, setIncludeThoughts] = useState(false);
             const [isProcessing, setIsProcessing] = useState(false);
@@ -188,7 +187,7 @@
                 URL.revokeObjectURL(url);
             };
 
-            useEffect(() => {
+            const output = useMemo(() => {
                 let combinedMarkdown = "";
 
                 parsedData.forEach(({ name, conversation, error }) => {
@@ -214,7 +213,7 @@
                     });
                 });
 
-                setOutput(combinedMarkdown);
+                return combinedMarkdown;
             }, [parsedData, includeThoughts]);
 
             return (
@@ -229,6 +228,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
+                            <p className="text-xs text-slate-400 font-mono">v1.1.0</p>
                         </div>
 
                         {/* Main Grid */}
@@ -268,6 +268,8 @@
                                         </span>
                                         <button
                                             onClick={() => setIncludeThoughts(!includeThoughts)}
+                                            aria-label="Toggle reasoning blocks"
+                                            aria-pressed={includeThoughts}
                                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${includeThoughts ? 'bg-blue-600' : 'bg-slate-200'}`}
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${includeThoughts ? 'translate-x-6' : 'translate-x-1'}`} />
@@ -283,7 +285,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setParsedData([]); setOutput("");}} variant="danger" disabled={!output} className="w-full justify-center">
+                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
