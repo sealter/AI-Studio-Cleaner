@@ -1,0 +1,12 @@
+{
+  "chunks": [
+    {
+      "role": "user",
+      "parts": [{ "text": "Hello AI" }]
+    },
+    {
+      "role": "model",
+      "parts": [{ "text": "Hello Human" }]
+    }
+  ]
+}

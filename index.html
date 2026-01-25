@@ -128,17 +128,16 @@
             const handleFiles = async (fileList) => {
                 setIsProcessing(true);
                 const newFiles = Array.from(fileList);
-                const results = [];
 
-                for (const file of newFiles) {
+                const results = await Promise.all(newFiles.map(async (file) => {
                     try {
                         const text = await file.text();
                         const conversation = parseAIStudioJSON(text);
-                        results.push({ name: file.name, conversation, error: !conversation });
+                        return { name: file.name, conversation, error: !conversation };
                     } catch (e) {
-                        results.push({ name: file.name, error: true });
+                        return { name: file.name, error: true };
                     }
-                }
+                }));
 
                 setParsedData(results);
                 setFiles(newFiles);
