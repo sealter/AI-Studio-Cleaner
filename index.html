@@ -43,7 +43,8 @@
             Copy: (props) => <Icon {...props} path={<><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></>} />,
             Download: (props) => <Icon {...props} path={<><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></>} />,
             RefreshCw: (props) => <Icon {...props} path={<><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></>} />,
-            FileText: (props) => <Icon {...props} path={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></>} />
+            FileText: (props) => <Icon {...props} path={<><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></>} />,
+            Check: (props) => <Icon {...props} path={<polyline points="20 6 9 17 4 12"/>} />
         };
 
         // --- COMPONENTS ---
@@ -77,6 +78,7 @@
             const [includeThoughts, setIncludeThoughts] = useState(false);
             const [isProcessing, setIsProcessing] = useState(false);
             const [dragActive, setDragActive] = useState(false);
+            const [copySuccess, setCopySuccess] = useState(false);
 
             const parseAIStudioJSON = (json) => {
                 try {
@@ -164,6 +166,8 @@
             const copyToClipboard = async () => {
                 try {
                     await navigator.clipboard.writeText(output);
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
                 } catch (err) {
                     // Fallback for older browsers
                     const el = document.createElement('textarea');
@@ -172,6 +176,8 @@
                     el.select();
                     document.execCommand('copy');
                     document.body.removeChild(el);
+                    setCopySuccess(true);
+                    setTimeout(() => setCopySuccess(false), 2000);
                 }
             };
 
@@ -239,7 +245,7 @@
 
                                 {/* Upload Zone */}
                                 <div
-                                    className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer relative bg-white
+                                    className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer relative bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
                                         ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'}`}
                                     onDragEnter={onDragEnter}
                                     onDragLeave={onDragLeave}
@@ -252,6 +258,7 @@
                                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                                         onChange={handleInputChange}
                                         accept=".json,.txt"
+                                        aria-label="Upload AI Studio JSON export"
                                     />
                                     <div className="bg-blue-100 p-4 rounded-full mb-4">
                                         <Icons.FileJson className="w-8 h-8 text-blue-600" />
@@ -303,7 +310,8 @@
                                         </h2>
                                         <div className="flex gap-2">
                                             <Button variant="secondary" onClick={copyToClipboard} disabled={!output} className="text-sm py-1.5 h-9">
-                                                <Icons.Copy className="w-4 h-4" /> Copy
+                                                {copySuccess ? <Icons.Check className="w-4 h-4 text-green-600" /> : <Icons.Copy className="w-4 h-4" />}
+                                                {copySuccess ? <span className="text-green-600">Copied!</span> : "Copy"}
                                             </Button>
                                             <Button onClick={downloadMarkdown} disabled={!output} className="text-sm py-1.5 h-9">
                                                 <Icons.Download className="w-4 h-4" /> Download .md
@@ -311,19 +319,21 @@
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 relative bg-white">
-                                        {output ? (
+                                    <div className="flex-1 relative bg-white group">
+                                        {output && (
                                             <textarea
-                                                className="w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed"
+                                                className={`w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 ${isProcessing ? 'opacity-50' : ''}`}
                                                 value={output}
                                                 readOnly
+                                                aria-label="Generated Markdown"
                                             />
-                                        ) : (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400">
-                                                <div className="bg-slate-50 p-4 rounded-full mb-3">
+                                        )}
+                                        {(!output || isProcessing) && (
+                                            <div className={`absolute inset-0 flex flex-col items-center justify-center text-slate-400 ${output ? 'z-10' : ''}`}>
+                                                <div className="bg-slate-50 p-4 rounded-full mb-3 shadow-sm">
                                                     <Icons.RefreshCw className={`w-6 h-6 ${isProcessing ? 'animate-spin text-blue-500' : ''}`} />
                                                 </div>
-                                                <p>Upload a file to generate Markdown</p>
+                                                {!output && <p>Upload a file to generate Markdown</p>}
                                             </div>
                                         )}
                                     </div>
