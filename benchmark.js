@@ -24,7 +24,7 @@ class MockFile {
     }
 }
 
-// Sequential Implementation (Current Code)
+// Sequential Implementation (Current Code) - Optimized to Concurrent
 async function handleFilesSequential(files) {
     const promises = files.map(async (file) => {
         try {
