@@ -26,7 +26,7 @@ class MockFile {
 
 // Sequential Implementation (Current Code)
 async function handleFilesSequential(files) {
-    const results = await Promise.all(files.map(async (file) => {
+    const promises = files.map(async (file) => {
         try {
             const text = await file.text();
             const conversation = parseAIStudioJSON(text);
@@ -34,8 +34,8 @@ async function handleFilesSequential(files) {
         } catch (e) {
             return { name: file.name, error: true };
         }
-    }));
-    return results;
+    });
+    return Promise.all(promises);
 }
 
 // Concurrent Implementation (Optimized Code)
