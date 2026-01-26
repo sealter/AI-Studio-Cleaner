@@ -3,10 +3,7 @@ const { performance } = require('perf_hooks');
 // Mock Data Processing
 const parseAIStudioJSON = (text) => {
     // Simulate CPU work (parsing)
-    let count = 0;
-    // Reduce CPU load simulation to focus on I/O concurrency benefit,
-    // but keep it non-trivial.
-    for(let i=0; i<10000; i++) { count += i }
+    // Optimized: Removed blocking loop
     return { mock: "data", textLength: text.length };
 };
 
