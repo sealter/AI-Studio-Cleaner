@@ -3,7 +3,6 @@ const { performance } = require('perf_hooks');
 // Mock Data Processing
 const parseAIStudioJSON = (text) => {
     // Simulate CPU work (parsing)
-    // Optimized: Removed blocking loop
     return { mock: "data", textLength: text.length };
 };
 
