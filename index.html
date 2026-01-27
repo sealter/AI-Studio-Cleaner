@@ -194,32 +194,30 @@
             };
 
             const output = useMemo(() => {
-                let combinedMarkdown = "";
+                const parts = [];
 
                 parsedData.forEach(({ name, conversation, error }) => {
                     if (error) {
-                        combinedMarkdown += `> ⚠️ Error parsing file: ${name}\n\n`;
+                        parts.push(`> ⚠️ Error parsing file: ${name}\n\n`);
                         return;
                     }
 
-                    combinedMarkdown += `# Source: ${name}\n\n`;
+                    parts.push(`# Source: ${name}\n\n`);
 
                     conversation.forEach(msg => {
                         const roleIcon = msg.role === 'User' ? '👤' : '🤖';
+                        let thoughtBlock = "";
 
                         if (includeThoughts && msg.hasThoughts) {
-                            combinedMarkdown += `> **🧠 Thinking Process**\n> \n`;
                             const indentedThoughts = msg.thoughts.split('\n').map(line => `> ${line}`).join('\n');
-                            combinedMarkdown += `${indentedThoughts}\n\n`;
+                            thoughtBlock = `> **🧠 Thinking Process**\n> \n${indentedThoughts}\n\n`;
                         }
 
-                        combinedMarkdown += `## ${roleIcon} ${msg.role}\n\n`;
-                        combinedMarkdown += `${msg.content}\n\n`;
-                        combinedMarkdown += `---\n\n`;
+                        parts.push(`${thoughtBlock}## ${roleIcon} ${msg.role}\n\n${msg.content}\n\n---\n\n`);
                     });
                 });
 
-                return combinedMarkdown;
+                return parts.join('');
             }, [parsedData, includeThoughts]);
 
             return (
