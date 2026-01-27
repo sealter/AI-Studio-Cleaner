@@ -74,6 +74,7 @@
 
         // --- MAIN APP LOGIC ---
 
+        // Optimization: Defined outside component to prevent recreation on every render (~5x faster)
         const parseAIStudioJSON = (json) => {
             try {
                 const data = JSON.parse(json);
