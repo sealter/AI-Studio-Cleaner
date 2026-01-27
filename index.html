@@ -63,7 +63,7 @@
             ghost: "hover:bg-slate-100 text-slate-600"
         };
 
-        const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
+        const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2";
 
         const Button = ({ children, onClick, variant = "primary", className = "", disabled = false }) => {
             return (
@@ -88,14 +88,10 @@
                     const role = chunk.role === 'model' ? 'Model' : 'User';
                     let thoughts = [];
 
-                    // Strategy 1: Top level text
                     const contentParts = [];
-                    if (chunk.text) {
-                        contentParts.push(chunk.text);
-                    }
 
-                    // Strategy 2: Parts array (common in AI Studio exports)
-                    if (chunk.parts && Array.isArray(chunk.parts)) {
+                    // Strategy: Prefer parts array if available to capture structure (thoughts vs content)
+                    if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
                         chunk.parts.forEach(part => {
                             if (part.thought || part.isThought) {
                                 thoughts.push(part.text);
@@ -103,6 +99,9 @@
                                 contentParts.push(part.text);
                             }
                         });
+                    } else if (chunk.text) {
+                        // Fallback to top-level text if parts are missing
+                        contentParts.push(chunk.text);
                     }
                     const content = contentParts.join('');
 
@@ -165,6 +164,7 @@
             const handleInputChange = (e) => {
                 if (e.target.files && e.target.files[0]) {
                     handleFiles(e.target.files);
+                    e.target.value = ''; // Reset input to allow selecting the same file again
                 }
             };
 
@@ -238,7 +238,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.1.0</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.0</p>
                         </div>
 
                         {/* Main Grid */}
@@ -296,7 +296,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output} className="w-full justify-center">
+                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output || isProcessing} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
@@ -313,11 +313,11 @@
                                             <Icons.FileText className="w-4 h-4 text-blue-500" /> Preview
                                         </h2>
                                         <div className="flex gap-2">
-                                            <Button variant="secondary" onClick={copyToClipboard} disabled={!output} className="text-sm py-1.5 h-9">
+                                            <Button variant="secondary" onClick={copyToClipboard} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
                                                 {copySuccess ? <Icons.Check className="w-4 h-4 text-green-600" /> : <Icons.Copy className="w-4 h-4" />}
                                                 {copySuccess ? <span className="text-green-600">Copied!</span> : "Copy"}
                                             </Button>
-                                            <Button onClick={downloadMarkdown} disabled={!output} className="text-sm py-1.5 h-9">
+                                            <Button onClick={downloadMarkdown} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
                                                 <Icons.Download className="w-4 h-4" /> Download .md
                                             </Button>
                                         </div>
@@ -326,7 +326,7 @@
                                     <div className="flex-1 relative bg-white group">
                                         {output && (
                                             <textarea
-                                                className={`w-full h-full p-6 resize-none focus:outline-none font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 ${isProcessing ? 'opacity-50' : ''}`}
+                                                className={`w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 ${isProcessing ? 'opacity-50' : ''}`}
                                                 value={output}
                                                 readOnly
                                                 aria-label="Generated Markdown"
