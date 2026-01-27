@@ -73,6 +73,53 @@
 
         // --- MAIN APP LOGIC ---
 
+        const parseAIStudioJSON = (json) => {
+            try {
+                const data = JSON.parse(json);
+                let conversation = [];
+
+                // Handle standard AI Studio export format
+                const chunks = data.chunkedPrompt?.chunks || data.chunks || [];
+
+                chunks.forEach((chunk) => {
+                    const role = chunk.role === 'model' ? 'Model' : 'User';
+                    let thoughts = [];
+
+                    // Strategy 1: Top level text
+                    const contentParts = [];
+                    if (chunk.text) {
+                        contentParts.push(chunk.text);
+                    }
+
+                    // Strategy 2: Parts array (common in AI Studio exports)
+                    if (chunk.parts && Array.isArray(chunk.parts)) {
+                        chunk.parts.forEach(part => {
+                            if (part.thought || part.isThought) {
+                                thoughts.push(part.text);
+                            } else if (part.text) {
+                                contentParts.push(part.text);
+                            }
+                        });
+                    }
+                    const content = contentParts.join('');
+
+                    if (content.trim() || thoughts.length > 0) {
+                        conversation.push({
+                            role,
+                            content: content.trim(),
+                            thoughts: thoughts.join('\n\n'),
+                            hasThoughts: thoughts.length > 0
+                        });
+                    }
+                });
+
+                return conversation;
+            } catch (e) {
+                console.error("Parse Error", e);
+                return null;
+            }
+        };
+
         function App() {
             const [files, setFiles] = useState([]);
             const [parsedData, setParsedData] = useState([]);
@@ -80,53 +127,6 @@
             const [isProcessing, setIsProcessing] = useState(false);
             const [dragActive, setDragActive] = useState(false);
             const [copySuccess, setCopySuccess] = useState(false);
-
-            const parseAIStudioJSON = (json) => {
-                try {
-                    const data = JSON.parse(json);
-                    let conversation = [];
-
-                    // Handle standard AI Studio export format
-                    const chunks = data.chunkedPrompt?.chunks || data.chunks || [];
-
-                    chunks.forEach((chunk) => {
-                        const role = chunk.role === 'model' ? 'Model' : 'User';
-                        let thoughts = [];
-
-                        // Strategy 1: Top level text
-                        const contentParts = [];
-                        if (chunk.text) {
-                            contentParts.push(chunk.text);
-                        }
-
-                        // Strategy 2: Parts array (common in AI Studio exports)
-                        if (chunk.parts && Array.isArray(chunk.parts)) {
-                            chunk.parts.forEach(part => {
-                                if (part.thought || part.isThought) {
-                                    thoughts.push(part.text);
-                                } else if (part.text) {
-                                    contentParts.push(part.text);
-                                }
-                            });
-                        }
-                        const content = contentParts.join('');
-
-                        if (content.trim() || thoughts.length > 0) {
-                            conversation.push({
-                                role,
-                                content: content.trim(),
-                                thoughts: thoughts.join('\n\n'),
-                                hasThoughts: thoughts.length > 0
-                            });
-                        }
-                    });
-
-                    return conversation;
-                } catch (e) {
-                    console.error("Parse Error", e);
-                    return null;
-                }
-            };
 
             const handleFiles = async (fileList) => {
                 setIsProcessing(true);
