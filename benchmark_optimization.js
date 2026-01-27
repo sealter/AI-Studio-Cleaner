@@ -92,11 +92,11 @@ const parseAIStudioJSON_Optimized = (json) => {
 
 function generateLargeData() {
     const chunks = [];
-    // 1 chunk, 100000 parts
+    // 1 chunk, 1,000,000 parts to stress test
     const largeText = "A";
     for (let i = 0; i < 1; i++) {
         const parts = [];
-        for (let j = 0; j < 100000; j++) {
+        for (let j = 0; j < 1000000; j++) {
             parts.push({ text: `Part ${j} ${largeText}` });
         }
         chunks.push({
@@ -113,8 +113,12 @@ function runBenchmark() {
     console.log("Data generated. Size: " + (jsonData.length / 1024 / 1024).toFixed(2) + " MB");
 
     // Warmup
-    parseAIStudioJSON_Original(jsonData);
-    parseAIStudioJSON_Optimized(jsonData);
+    try {
+        parseAIStudioJSON_Original(jsonData); // Run once to warm up JIT
+        parseAIStudioJSON_Optimized(jsonData);
+    } catch (e) {
+        // Ignore warmup errors if any (e.g. stack overflow?)
+    }
 
     console.log("Running Original...");
     const startOriginal = performance.now();
@@ -133,12 +137,16 @@ function runBenchmark() {
     console.log(`Improvement: ${(timeOriginal / timeOptimized).toFixed(2)}x speedup`);
 
     // Correctness Check
-    const originalStr = JSON.stringify(resultOriginal);
-    const optimizedStr = JSON.stringify(resultOptimized);
-    if (originalStr === optimizedStr) {
-        console.log("✅ Verification Passed: Outputs are identical.");
+    if (resultOriginal && resultOptimized) {
+        const originalStr = JSON.stringify(resultOriginal);
+        const optimizedStr = JSON.stringify(resultOptimized);
+        if (originalStr === optimizedStr) {
+            console.log("✅ Verification Passed: Outputs are identical.");
+        } else {
+            console.error("❌ Verification Failed: Outputs differ!");
+        }
     } else {
-        console.error("❌ Verification Failed: Outputs differ!");
+        console.error("❌ One of the runs failed.");
     }
 }
 

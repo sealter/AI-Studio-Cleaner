@@ -91,7 +91,6 @@
 
                     chunks.forEach((chunk) => {
                         const role = chunk.role === 'model' ? 'Model' : 'User';
-                        let content = '';
                         let thoughts = [];
 
                         // Strategy 1: Top level text
@@ -110,7 +109,7 @@
                                 }
                             });
                         }
-                        content = contentParts.join('');
+                        const content = contentParts.join('');
 
                         if (content.trim() || thoughts.length > 0) {
                             conversation.push({
