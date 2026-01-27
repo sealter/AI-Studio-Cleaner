@@ -10,31 +10,34 @@ const parseAIStudioJSON_Original = (json) => {
 
         chunks.forEach((chunk) => {
             const role = chunk.role === 'model' ? 'Model' : 'User';
-            let thoughts = [];
-            let contentParts = [];
+            let thoughts = "";
+            let thoughtsCount = 0;
+            let content = "";
 
             if (chunk.text) {
-                contentParts.push(chunk.text);
+                content += chunk.text;
             }
 
             if (chunk.parts && Array.isArray(chunk.parts)) {
                 chunk.parts.forEach(part => {
                     if (part.thought || part.isThought) {
-                        thoughts.push(part.text);
+                        if (thoughtsCount > 0) {
+                            thoughts += "\n\n";
+                        }
+                        thoughts += (part.text || '');
+                        thoughtsCount++;
                     } else if (part.text) {
-                        contentParts.push(part.text);
+                        content += part.text;
                     }
                 });
             }
 
-            const content = contentParts.join('');
-
-            if (content.trim() || thoughts.length > 0) {
+            if (content.trim() || thoughtsCount > 0) {
                 conversation.push({
                     role,
                     content: content.trim(),
-                    thoughts: thoughts.join('\n\n'),
-                    hasThoughts: thoughts.length > 0
+                    thoughts: thoughts,
+                    hasThoughts: thoughtsCount > 0
                 });
             }
         });
