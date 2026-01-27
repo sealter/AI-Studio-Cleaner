@@ -10,11 +10,11 @@ const parseAIStudioJSON_Original = (json) => {
 
         chunks.forEach((chunk) => {
             const role = chunk.role === 'model' ? 'Model' : 'User';
-            let content = '';
             let thoughts = [];
+            let contentParts = [];
 
             if (chunk.text) {
-                content = chunk.text;
+                contentParts.push(chunk.text);
             }
 
             if (chunk.parts && Array.isArray(chunk.parts)) {
@@ -22,10 +22,12 @@ const parseAIStudioJSON_Original = (json) => {
                     if (part.thought || part.isThought) {
                         thoughts.push(part.text);
                     } else if (part.text) {
-                        content += part.text;
+                        contentParts.push(part.text);
                     }
                 });
             }
+
+            const content = contentParts.join('');
 
             if (content.trim() || thoughts.length > 0) {
                 conversation.push({
