@@ -296,7 +296,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output} className="w-full justify-center">
+                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output || isProcessing} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
@@ -313,11 +313,11 @@
                                             <Icons.FileText className="w-4 h-4 text-blue-500" /> Preview
                                         </h2>
                                         <div className="flex gap-2">
-                                            <Button variant="secondary" onClick={copyToClipboard} disabled={!output} className="text-sm py-1.5 h-9">
+                                            <Button variant="secondary" onClick={copyToClipboard} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
                                                 {copySuccess ? <Icons.Check className="w-4 h-4 text-green-600" /> : <Icons.Copy className="w-4 h-4" />}
                                                 {copySuccess ? <span className="text-green-600">Copied!</span> : "Copy"}
                                             </Button>
-                                            <Button onClick={downloadMarkdown} disabled={!output} className="text-sm py-1.5 h-9">
+                                            <Button onClick={downloadMarkdown} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
                                                 <Icons.Download className="w-4 h-4" /> Download .md
                                             </Button>
                                         </div>
