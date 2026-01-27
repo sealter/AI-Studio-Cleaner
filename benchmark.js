@@ -20,18 +20,19 @@ class MockFile {
     }
 }
 
-// Optimized Implementation (formerly Sequential)
-async function handleFilesOptimized(files) {
-    const promises = files.map(async (file) => {
+// Sequential Implementation
+async function handleFilesSequential(files) {
+    const results = [];
+    for (const file of files) {
         try {
             const text = await file.text();
             const conversation = parseAIStudioJSON(text);
-            return { name: file.name, conversation, error: !conversation };
+            results.push({ name: file.name, conversation, error: !conversation });
         } catch (e) {
-            return { name: file.name, error: true };
+            results.push({ name: file.name, error: true });
         }
-    });
-    return Promise.all(promises);
+    }
+    return results;
 }
 
 // Concurrent Implementation (Optimized Code)
@@ -58,12 +59,12 @@ async function run() {
     const fileCount = 50;
     const files = Array.from({ length: fileCount }, (_, i) => new MockFile(`file${i}.json`, `{"some": "json content"}`));
 
-    // Test Optimized
+    // Test Sequential
     const startSeq = performance.now();
-    await handleFilesOptimized(files);
+    await handleFilesSequential(files);
     const endSeq = performance.now();
     const seqTime = (endSeq - startSeq).toFixed(2);
-    console.log(`Optimized processing of ${fileCount} files: ${seqTime}ms`);
+    console.log(`Sequential processing of ${fileCount} files: ${seqTime}ms`);
 
     // Test Concurrent
     const startConc = performance.now();
@@ -74,7 +75,7 @@ async function run() {
 
     // Calculate Improvement
     const speedup = (parseFloat(seqTime) / parseFloat(concTime)).toFixed(2);
-    console.log(`Speedup (Optimized vs Concurrent): ${speedup}x`);
+    console.log(`Speedup (Sequential vs Concurrent): ${speedup}x`);
 }
 
 run();
