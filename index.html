@@ -94,8 +94,9 @@
                         let thoughts = [];
 
                         // Strategy 1: Top level text
+                        const contentParts = [];
                         if (chunk.text) {
-                            content = chunk.text;
+                            contentParts.push(chunk.text);
                         }
 
                         // Strategy 2: Parts array (common in AI Studio exports)
@@ -104,10 +105,11 @@
                                 if (part.thought || part.isThought) {
                                     thoughts.push(part.text);
                                 } else if (part.text) {
-                                    content += part.text;
+                                    contentParts.push(part.text);
                                 }
                             });
                         }
+                        content = contentParts.join('');
 
                         if (content.trim() || thoughts.length > 0) {
                             conversation.push({
