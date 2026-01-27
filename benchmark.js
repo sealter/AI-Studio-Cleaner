@@ -20,18 +20,19 @@ class MockFile {
     }
 }
 
-// Sequential Implementation (Current Code) - Optimized to Concurrent
+// Sequential Implementation (Corrected to Sequential)
 async function handleFilesSequential(files) {
-    const promises = files.map(async (file) => {
+    const results = [];
+    for (const file of files) {
         try {
             const text = await file.text();
             const conversation = parseAIStudioJSON(text);
-            return { name: file.name, conversation, error: !conversation };
+            results.push({ name: file.name, conversation, error: !conversation });
         } catch (e) {
-            return { name: file.name, error: true };
+            results.push({ name: file.name, error: true });
         }
-    });
-    return Promise.all(promises);
+    }
+    return results;
 }
 
 // Concurrent Implementation (Optimized Code)
