@@ -88,14 +88,10 @@
                     const role = chunk.role === 'model' ? 'Model' : 'User';
                     let thoughts = [];
 
-                    // Strategy 1: Top level text
                     const contentParts = [];
-                    if (chunk.text) {
-                        contentParts.push(chunk.text);
-                    }
 
-                    // Strategy 2: Parts array (common in AI Studio exports)
-                    if (chunk.parts && Array.isArray(chunk.parts)) {
+                    // Strategy: Prefer parts array if available to capture structure (thoughts vs content)
+                    if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
                         chunk.parts.forEach(part => {
                             if (part.thought || part.isThought) {
                                 thoughts.push(part.text);
@@ -103,6 +99,9 @@
                                 contentParts.push(part.text);
                             }
                         });
+                    } else if (chunk.text) {
+                        // Fallback to top-level text if parts are missing
+                        contentParts.push(chunk.text);
                     }
                     const content = contentParts.join('');
 
@@ -239,7 +238,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.1.0</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.0</p>
                         </div>
 
                         {/* Main Grid */}

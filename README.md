@@ -1,4 +1,4 @@
-# AI Studio History Cleaner v1.1.0
+# AI Studio History Cleaner v1.2.0
 
 A lightweight, browser-based tool to parse and clean up exported chat history JSON files from Google AI Studio. It extracts the conversation into a clean, readable Markdown format, with optional support for including "Thinking" (Reasoning) blocks.
 
@@ -51,5 +51,3 @@ Your site will be live in a few moments!
 
 
 MIT License - feel free to use, modify, and distribute as you wish.
-
-
