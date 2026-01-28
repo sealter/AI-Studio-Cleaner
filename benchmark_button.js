@@ -21,7 +21,7 @@ const ButtonBad = ({ children, onClick, variant = "primary", className = "", dis
     return `${baseStyle} ${variants[variant]} ${className}`;
 };
 
-// Case B: Variants outside, BaseStyle inside (Current state of repo)
+// Case B: Variants outside, BaseStyle inside (Legacy state)
 const variants = {
     primary: "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transform active:scale-95",
     secondary: "bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm",
@@ -34,7 +34,7 @@ const ButtonCurrent = ({ children, onClick, variant = "primary", className = "",
     return `${baseStyle} ${variants[variant]} ${className}`;
 };
 
-// Case C: Both outside (Target state)
+// Case C: Both outside (Current Production State)
 const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const ButtonOptimized = ({ children, onClick, variant = "primary", className = "", disabled = false }) => {
