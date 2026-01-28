@@ -47,6 +47,21 @@ Your site will be live in a few moments!
 - **Babel Standalone** (for in-browser JSX compilation)
 - **Inline SVG Icons** (custom lightweight icons)
 
+## 🧪 Development & Testing
+
+This repository includes a suite of Node.js scripts to verify performance, robustness, and logic integrity.
+
+### Performance Benchmarks
+Run these scripts to verify the performance impact of code changes.
+- `node benchmark_optimization.js`: Measures parsing throughput (Original vs Optimized).
+- `node benchmark_button.js`: Benchmarks React component style composition patterns.
+- `node benchmark_indentation.js`: Compares string indentation strategies (Regex vs Split/Join).
+
+### Stress Testing
+- `node simulation_stress_test.js`: Runs an intensive simulation verifying the app's ability to handle massive datasets.
+  - **Scenarios:** 24, 60, 120, and **240 months** (Supernova) of chat history.
+  - **Chaos Mode:** Tests resilience against malformed or corrupted JSON inputs.
+
 ## 📄 License
 
 

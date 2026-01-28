@@ -62,11 +62,7 @@ const parseAIStudioJSON_Optimized = (json) => {
             let thoughts = [];
             let contentParts = [];
 
-            if (chunk.text) {
-                contentParts.push(chunk.text);
-            }
-
-            if (chunk.parts && Array.isArray(chunk.parts)) {
+            if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
                 chunk.parts.forEach(part => {
                     if (part.thought || part.isThought) {
                         thoughts.push(part.text);
@@ -74,6 +70,8 @@ const parseAIStudioJSON_Optimized = (json) => {
                         contentParts.push(part.text);
                     }
                 });
+            } else if (chunk.text) {
+                contentParts.push(chunk.text);
             }
 
             const content = contentParts.join('');
