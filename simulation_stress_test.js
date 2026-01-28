@@ -121,9 +121,9 @@ function generateLargeFile() {
 }
 
 async function runSimulation() {
-    console.log("=== Intensive Use Simulation (24, 60, 120 Months) ===");
+    console.log("=== Intensive Use Simulation (24, 60, 120, 240 Months) ===");
 
-    const scenarios = [24, 60, 120];
+    const scenarios = [24, 60, 120, 240];
 
     for (const months of scenarios) {
         console.log(`\n--- Scenario: ${months} Months ---`);
