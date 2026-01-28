@@ -245,7 +245,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.1</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.2</p>
                         </div>
 
                         {/* Main Grid */}
@@ -256,7 +256,7 @@
 
                                 {/* Upload Zone */}
                                 <div
-                                    className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer relative bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
+                                    className={`flex-1 rounded-xl border-2 border-dashed transition-all duration-200 flex flex-col items-center justify-center p-8 text-center cursor-pointer relative bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 touch-manipulation
                                         ${dragActive ? 'border-blue-500 bg-blue-50' : 'border-slate-300 hover:border-blue-400 hover:bg-slate-50'}`}
                                     onDragEnter={onDragEnter}
                                     onDragLeave={onDragLeave}
@@ -333,7 +333,7 @@
                                     <div className="flex-1 relative bg-white group">
                                         {output && (
                                             <textarea
-                                                className={`w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 ${isProcessing ? 'opacity-50' : ''}`}
+                                                className={`w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 touch-manipulation ${isProcessing ? 'opacity-50' : ''}`}
                                                 value={output}
                                                 readOnly
                                                 aria-label="Generated Markdown"
