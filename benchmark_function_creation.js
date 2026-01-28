@@ -24,14 +24,9 @@ function getLogic() {
                 const role = chunk.role === 'model' ? 'Model' : 'User';
                 let thoughts = [];
 
-                // Strategy 1: Top level text
                 const contentParts = [];
-                if (chunk.text) {
-                    contentParts.push(chunk.text);
-                }
 
-                // Strategy 2: Parts array (common in AI Studio exports)
-                if (chunk.parts && Array.isArray(chunk.parts)) {
+                if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
                     chunk.parts.forEach(part => {
                         if (part.thought || part.isThought) {
                             thoughts.push(part.text);
@@ -39,6 +34,8 @@ function getLogic() {
                             contentParts.push(part.text);
                         }
                     });
+                } else if (chunk.text) {
+                    contentParts.push(chunk.text);
                 }
                 const content = contentParts.join('');
 
