@@ -79,12 +79,17 @@
         const parseAIStudioJSON = (json) => {
             try {
                 const data = JSON.parse(json);
+                if (!data || typeof data !== 'object') return null;
+
                 let conversation = [];
 
                 // Handle standard AI Studio export format
-                const chunks = data.chunkedPrompt?.chunks || data.chunks || [];
+                let chunks = data.chunkedPrompt?.chunks || data.chunks;
+                if (!Array.isArray(chunks)) chunks = [];
 
                 chunks.forEach((chunk) => {
+                    if (!chunk || typeof chunk !== 'object') return;
+
                     const role = chunk.role === 'model' ? 'Model' : 'User';
                     let thoughts = [];
 
@@ -93,8 +98,10 @@
                     // Strategy: Prefer parts array if available to capture structure (thoughts vs content)
                     if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
                         chunk.parts.forEach(part => {
+                            if (!part || typeof part !== 'object') return;
+
                             if (part.thought || part.isThought) {
-                                thoughts.push(part.text);
+                                thoughts.push(part.text || '');
                             } else if (part.text) {
                                 contentParts.push(part.text);
                             }
