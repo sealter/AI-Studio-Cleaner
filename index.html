@@ -63,7 +63,7 @@
             ghost: "hover:bg-slate-100 text-slate-600"
         };
 
-        const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2";
+        const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation";
 
         const Button = ({ children, onClick, variant = "primary", className = "", disabled = false }) => {
             return (
@@ -245,7 +245,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.0</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.1</p>
                         </div>
 
                         {/* Main Grid */}
@@ -288,7 +288,7 @@
                                             onClick={() => setIncludeThoughts(!includeThoughts)}
                                             aria-label="Toggle reasoning blocks"
                                             aria-pressed={includeThoughts}
-                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${includeThoughts ? 'bg-blue-600' : 'bg-slate-200'}`}
+                                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation ${includeThoughts ? 'bg-blue-600' : 'bg-slate-200'}`}
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${includeThoughts ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </button>
