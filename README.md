@@ -1,4 +1,4 @@
-# AI Studio History Cleaner v1.2.3
+# AI Studio History Cleaner v1.2.4
 
 A lightweight, browser-based tool to parse and clean up exported chat history JSON files from Google AI Studio. It extracts the conversation into a clean, readable Markdown format, with optional support for including "Thinking" (Reasoning) blocks.
 
@@ -46,22 +46,6 @@ Your site will be live in a few moments!
 - **Tailwind CSS** (via CDN for styling)
 - **Babel Standalone** (for in-browser JSX compilation)
 - **Inline SVG Icons** (custom lightweight icons)
-
-## 🧪 Development & Testing
-
-This repository includes a suite of Node.js scripts to verify performance, robustness, and logic integrity.
-
-### Performance Benchmarks
-Run these scripts to verify the performance impact of code changes.
-- `node benchmark_optimization.js`: Measures parsing throughput (Original vs Optimized).
-- `node benchmark_button.js`: Benchmarks React component style composition patterns.
-- `node benchmark_indentation.js`: Compares string indentation strategies (Regex vs Split/Join).
-- `node benchmark_markdown_gen.js`: Compares markdown generation strategies (Template Literal vs Granular Push).
-
-### Stress Testing
-- `node simulation_stress_test.js`: Runs an intensive simulation verifying the app's ability to handle massive datasets.
-  - **Scenarios:** 24, 60, 120, and **240 months** (Supernova) of chat history.
-  - **Chaos Mode:** Tests resilience against malformed or corrupted JSON inputs.
 
 ## 📄 License
 
