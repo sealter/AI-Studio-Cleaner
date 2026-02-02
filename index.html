@@ -28,7 +28,7 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useMemo } = React;
+        const { useState, useMemo, useCallback } = React;
 
         // --- ICONS (Inline SVGs to avoid complex CDN imports) ---
         const Icon = ({ path, className }) => (
@@ -65,13 +65,13 @@
 
         const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 touch-manipulation";
 
-        const Button = ({ children, onClick, variant = "primary", className = "", disabled = false }) => {
+        const Button = React.memo(({ children, onClick, variant = "primary", className = "", disabled = false }) => {
             return (
                 <button onClick={onClick} className={`${baseStyle} ${variants[variant]} ${className}`} disabled={disabled}>
                     {children}
                 </button>
             );
-        };
+        });
 
         // --- MAIN APP LOGIC ---
 
@@ -175,7 +175,12 @@
                 }
             };
 
-            const copyToClipboard = async () => {
+            const handleClear = useCallback(() => {
+                setFiles([]);
+                setParsedData([]);
+            }, []);
+
+            const copyToClipboard = useCallback(async () => {
                 try {
                     await navigator.clipboard.writeText(output);
                     setCopySuccess(true);
@@ -191,9 +196,9 @@
                     setCopySuccess(true);
                     setTimeout(() => setCopySuccess(false), 2000);
                 }
-            };
+            }, [output]);
 
-            const downloadMarkdown = () => {
+            const downloadMarkdown = useCallback(() => {
                 const element = document.createElement("a");
                 const file = new Blob([output], {type: 'text/markdown'});
                 const url = URL.createObjectURL(file);
@@ -203,7 +208,7 @@
                 element.click();
                 document.body.removeChild(element);
                 URL.revokeObjectURL(url);
-            };
+            }, [output]);
 
             const output = useMemo(() => {
                 const parts = [];
@@ -302,7 +307,7 @@
                                                     Processing {files.length} file(s)
                                                 </div>
                                             )}
-                                            <Button onClick={() => {setFiles([]); setParsedData([]);}} variant="danger" disabled={!output || isProcessing} className="w-full justify-center">
+                                            <Button onClick={handleClear} variant="danger" disabled={!output || isProcessing} className="w-full justify-center">
                                                 <Icons.Trash2 className="w-4 h-4" /> Clear All
                                             </Button>
                                         </div>
