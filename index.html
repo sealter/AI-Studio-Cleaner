@@ -73,6 +73,12 @@
             );
         });
 
+        // Optimization: Pre-defined children for Button stability with React.memo
+        const ClearButtonContent = <><Icons.Trash2 className="w-4 h-4" /> Clear All</>;
+        const DownloadButtonContent = <><Icons.Download className="w-4 h-4" /> Download .md</>;
+        const CopyButtonContent = <><Icons.Copy className="w-4 h-4" /> Copy</>;
+        const CopiedButtonContent = <><Icons.Check className="w-4 h-4 text-green-600" /><span className="text-green-600">Copied!</span></>;
+
         // --- MAIN APP LOGIC ---
 
         // Optimization: Defined outside component to prevent recreation on every render (Verified ~5.4x faster via benchmark)
@@ -308,7 +314,7 @@
                                                 </div>
                                             )}
                                             <Button onClick={handleClear} variant="danger" disabled={!output || isProcessing} className="w-full justify-center">
-                                                <Icons.Trash2 className="w-4 h-4" /> Clear All
+                                                {ClearButtonContent}
                                             </Button>
                                         </div>
                                     </div>
@@ -325,11 +331,10 @@
                                         </h2>
                                         <div className="flex gap-2">
                                             <Button variant="secondary" onClick={copyToClipboard} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
-                                                {copySuccess ? <Icons.Check className="w-4 h-4 text-green-600" /> : <Icons.Copy className="w-4 h-4" />}
-                                                {copySuccess ? <span className="text-green-600">Copied!</span> : "Copy"}
+                                                {copySuccess ? CopiedButtonContent : CopyButtonContent}
                                             </Button>
                                             <Button onClick={downloadMarkdown} disabled={!output || isProcessing} className="text-sm py-1.5 h-9">
-                                                <Icons.Download className="w-4 h-4" /> Download .md
+                                                {DownloadButtonContent}
                                             </Button>
                                         </div>
                                     </div>
