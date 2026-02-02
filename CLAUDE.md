@@ -51,7 +51,6 @@ The entire application lives in `index.html` - a self-contained React app with n
 ├── simulation_stress_test.js       # Large-scale stress testing (24-240 months)
 │
 ├── {EAF9E830...}.png       # Screenshot for README
-└── error.png               # Error state screenshot
 ```
 
 ## Development Guidelines
