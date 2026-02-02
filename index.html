@@ -210,11 +210,11 @@
 
                 parsedData.forEach(({ name, conversation, error }) => {
                     if (error) {
-                        parts.push(`> ⚠️ Error parsing file: ${name}\n\n`);
+                        parts.push('> ⚠️ Error parsing file: ', name, '\n\n');
                         return;
                     }
 
-                    parts.push(`# Source: ${name}\n\n`);
+                    parts.push('# Source: ', name, '\n\n');
 
                     conversation.forEach(msg => {
                         const roleIcon = msg.role === 'User' ? '👤' : '🤖';
@@ -244,7 +244,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.2</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.3</p>
                         </div>
 
                         {/* Main Grid */}
