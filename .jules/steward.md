@@ -5,3 +5,7 @@
 ## 2026-02-04 - [Palette] - [Mobile Input Latency]
 **Insight:** Standard buttons trigger a 300ms delay on mobile browsers to detect double-tap gestures, degrading perceived responsiveness.
 **Protocol:** All interactive elements must apply `touch-action: manipulation` (Tailwind: `touch-manipulation`) to disable double-tap zoom and eliminate the delay.
+
+## 2026-02-02 - [Palette] - [Decorative Icon Noise]
+**Insight:** Functional React components wrapping raw SVGs (like `Icon`) often lack accessibility context, causing screen readers to announce them as "group" or "image" without labels.
+**Protocol:** All decorative icon components MUST strictly include `aria-hidden="true"` by default unless explicitly labeled.
