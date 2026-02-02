@@ -44,7 +44,7 @@ function generateMarkdown_Slow(parsedData, includeThoughts) {
     return combinedMarkdown;
 }
 
-// 2. Fast: Array Push + Join (Current Implementation)
+// 2. Fast: Array Push + Join (Optimized Implementation)
 function generateMarkdown_Fast(parsedData, includeThoughts) {
     const parts = [];
 
@@ -58,15 +58,14 @@ function generateMarkdown_Fast(parsedData, includeThoughts) {
 
         conversation.forEach(msg => {
             const roleIcon = msg.role === 'User' ? '👤' : '🤖';
-            let thoughtBlock = "";
 
             if (includeThoughts && msg.hasThoughts) {
-                 // Optimization: replace is ~2.8x faster than split/map/join
+                // Optimization: replace is ~2.8x faster than split/map/join
                 const indentedThoughts = '> ' + msg.thoughts.replace(/\n/g, '\n> ');
-                thoughtBlock = `> **🧠 Thinking Process**\n> \n${indentedThoughts}\n\n`;
+                parts.push('> **🧠 Thinking Process**\n> \n', indentedThoughts, '\n\n');
             }
 
-            parts.push(`${thoughtBlock}## ${roleIcon} ${msg.role}\n\n${msg.content}\n\n---\n\n`);
+            parts.push('## ', roleIcon, ' ', msg.role, '\n\n', msg.content, '\n\n---\n\n');
         });
     });
 
