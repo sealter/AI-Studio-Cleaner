@@ -49,31 +49,35 @@ if (bodyEndIndex === -1) {
 const parseBody = indexContent.substring(bodyStartIndex + 1, bodyEndIndex);
 const parseAIStudioJSON = new Function('json', parseBody);
 
-// Extract Markdown Generation Logic (useMemo body)
-const memoStartMarker = 'const output = useMemo(() => {';
-const memoStartIndex = indexContent.indexOf(memoStartMarker);
-if (memoStartIndex === -1) {
-    console.error("Could not find useMemo logic start");
+// Extract generateMarkdown body
+const genMarker = 'const generateMarkdown = (parsedData, includeThoughts) => {';
+const genStartIndex = indexContent.indexOf(genMarker);
+if (genStartIndex === -1) {
+    console.error("Could not find generateMarkdown function start");
     process.exit(1);
 }
 
-// Similar brace counting
-let memoBodyStartIndex = memoStartIndex + memoStartMarker.length - 1; // '{'
-let memoBodyEndIndex = -1;
-braceCount = 0;
+let genBodyStartIndex = genStartIndex + genMarker.length - 1; // pointing to '{'
+let genBodyEndIndex = -1;
+let genBraceCount = 0;
 
-for (let i = memoBodyStartIndex; i < indexContent.length; i++) {
-    if (indexContent[i] === '{') braceCount++;
-    else if (indexContent[i] === '}') braceCount--;
+for (let i = genBodyStartIndex; i < indexContent.length; i++) {
+    if (indexContent[i] === '{') genBraceCount++;
+    else if (indexContent[i] === '}') genBraceCount--;
 
-    if (braceCount === 0) {
-        memoBodyEndIndex = i;
+    if (genBraceCount === 0) {
+        genBodyEndIndex = i;
         break;
     }
 }
 
-const memoBody = indexContent.substring(memoBodyStartIndex + 1, memoBodyEndIndex);
-const generateMarkdown = new Function('parsedData', 'includeThoughts', memoBody);
+if (genBodyEndIndex === -1) {
+    console.error("Could not find end of generateMarkdown");
+    process.exit(1);
+}
+
+const genBody = indexContent.substring(genBodyStartIndex + 1, genBodyEndIndex);
+const generateMarkdown = new Function('parsedData', 'includeThoughts', genBody);
 
 
 // --- Simulation Utils ---

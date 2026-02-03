@@ -9,3 +9,7 @@
 ## 2026-02-02 - [Palette] - [Decorative Icon Noise]
 **Insight:** Functional React components wrapping raw SVGs (like `Icon`) often lack accessibility context, causing screen readers to announce them as "group" or "image" without labels.
 **Protocol:** All decorative icon components MUST strictly include `aria-hidden="true"` by default unless explicitly labeled.
+
+## 2026-02-14 - [Bolt] - [Logic Extraction for Verification]
+**Insight:** Embedding complex logic (like markdown generation) inside React hooks makes it inaccessible to external verification scripts (e.g., stress tests) without fragile string parsing.
+**Protocol:** complex data transformation logic MUST be extracted into standalone pure functions outside the component to enable direct testing and benchmarking.
