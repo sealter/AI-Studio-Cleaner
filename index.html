@@ -170,6 +170,8 @@
             return parts.join('');
         };
 
+        const MAX_PREVIEW_LENGTH = 100000;
+
         function App() {
             const [files, setFiles] = useState([]);
             const [parsedData, setParsedData] = useState([]);
@@ -252,6 +254,11 @@
             }, [output]);
 
             const output = useMemo(() => generateMarkdown(parsedData, includeThoughts), [parsedData, includeThoughts]);
+
+            const previewOutput = useMemo(() => {
+                if (output.length <= MAX_PREVIEW_LENGTH) return output;
+                return output.slice(0, MAX_PREVIEW_LENGTH) + "\n\n... [Content truncated for performance. Download or copy to see full text] ...";
+            }, [output]);
 
             return (
                 <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 p-6 md:p-12">
@@ -353,7 +360,7 @@
                                         {output && (
                                             <textarea
                                                 className={`w-full h-full p-6 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset font-mono text-sm text-slate-800 leading-relaxed transition-opacity duration-200 touch-manipulation ${isProcessing ? 'opacity-50' : ''}`}
-                                                value={output}
+                                                value={previewOutput}
                                                 readOnly
                                                 aria-label="Generated Markdown"
                                             />
