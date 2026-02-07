@@ -101,8 +101,8 @@
                 let chunks = data.chunkedPrompt?.chunks || data.chunks;
                 if (!Array.isArray(chunks)) chunks = [];
 
-                chunks.forEach((chunk) => {
-                    if (!chunk || typeof chunk !== 'object') return;
+                for (const chunk of chunks) {
+                    if (!chunk || typeof chunk !== 'object') continue;
 
                     const role = chunk.role === 'model' ? 'Model' : 'User';
                     let thoughts = [];
@@ -111,15 +111,15 @@
 
                     // Strategy: Prefer parts array if available to capture structure (thoughts vs content)
                     if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
-                        chunk.parts.forEach(part => {
-                            if (!part || typeof part !== 'object') return;
+                        for (const part of chunk.parts) {
+                            if (!part || typeof part !== 'object') continue;
 
                             if (part.thought || part.isThought) {
                                 thoughts.push(part.text || '');
                             } else if (part.text) {
                                 contentParts.push(part.text);
                             }
-                        });
+                        }
                     } else if (chunk.text) {
                         // Fallback to top-level text if parts are missing
                         contentParts.push(chunk.text);
@@ -133,8 +133,8 @@
                             thoughts: thoughts.join('\n\n'),
                             hasThoughts: thoughts.length > 0
                         });
-                    }
-                });
+                            }
+                }
 
                 return conversation;
             } catch (e) {
@@ -146,15 +146,15 @@
         const generateMarkdown = (parsedData, includeThoughts) => {
             const parts = [];
 
-            parsedData.forEach(({ name, conversation, error }) => {
+            for (const { name, conversation, error } of parsedData) {
                 if (error) {
                     parts.push('> ⚠️ Error parsing file: ', name, '\n\n');
-                    return;
+                    continue;
                 }
 
                 parts.push('# Source: ', name, '\n\n');
 
-                conversation.forEach(msg => {
+                for (const msg of conversation) {
                     const roleIcon = msg.role === 'User' ? '👤' : '🤖';
 
                     if (includeThoughts && msg.hasThoughts) {
@@ -164,8 +164,8 @@
                     }
 
                     parts.push('## ', roleIcon, ' ', msg.role, '\n\n', msg.content, '\n\n---\n\n');
-                });
-            });
+                    }
+            }
 
             return parts.join('');
         };
@@ -265,7 +265,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.10</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.11</p>
                         </div>
 
                         {/* Main Grid */}
