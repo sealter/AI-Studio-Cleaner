@@ -115,7 +115,10 @@
                             if (!part || typeof part !== 'object') continue;
 
                             if (part.thought || part.isThought) {
-                                thoughts.push(part.text || '');
+                                const t = part.text || '';
+                                if (t.trim()) {
+                                    thoughts.push(t);
+                                }
                             } else if (part.text) {
                                 contentParts.push(part.text);
                             }
@@ -272,7 +275,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.11</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.12</p>
                         </div>
 
                         {/* Main Grid */}

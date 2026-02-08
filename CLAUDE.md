@@ -4,7 +4,7 @@ This file provides guidance for AI assistants working with this codebase.
 
 ## Project Overview
 
-**AI Studio History Cleaner** (v1.2.9) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
+**AI Studio History Cleaner** (v1.2.12) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
 
 **Live Demo**: https://shfqrkhn.github.io/AI-Studio-Cleaner/
 
@@ -82,6 +82,8 @@ From `.jules/steward.md`:
 1. **Tailwind CDN CORS Constraint**: Cannot use Subresource Integrity (SRI) with `cdn.tailwindcss.com` - no CORS headers are served.
 
 2. **Mobile Input Latency**: All interactive elements must use `touch-manipulation` class to eliminate 300ms tap delay.
+
+3. **Empty Thought Filtering**: The parser must filter out whitespace-only thought blocks to prevent visual noise.
 
 ### Code Style
 
