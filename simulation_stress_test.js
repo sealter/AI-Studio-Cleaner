@@ -101,7 +101,10 @@ function generateMockData(months) {
             // Add a thought
             chunks.push({
                 role: 'model',
-                parts: [{ text: "Final answer.", thought: "Thinking about the simulation..." }]
+                parts: [
+                    { text: "Thinking about the simulation...", thought: true },
+                    { text: "Final answer." }
+                ]
             });
 
             files.push({
@@ -197,6 +200,7 @@ async function runSimulation() {
         { name: "empty_chunks.json", content: '{"chunks": []}' },
         { name: "missing_text.json", content: '{"chunks": [{"role": "user"}]}' }, // Missing parts/text
         { name: "null_part.json", content: '{"chunks": [{"role": "model", "parts": [null]}]}' },
+        { name: "empty_thought.json", content: '{"chunks": [{"role": "model", "parts": [{"text": "   ", "thought": true}, {"text": "Hello"}]}]}' },
         { name: "wrong_type.json", content: '{"chunks": "not_an_array"}' },
         { name: "mixed_validity.json", content: '{"chunks": [{"role": "user", "text": "ok"}, {"role": "model", "parts": "broken"}]}' }
     ];
@@ -223,6 +227,16 @@ async function runSimulation() {
         const chaosOutput = generateMarkdown(chaosParsed, true);
         console.log(`Chaos Output Length: ${chaosOutput.length}`);
         console.log(`Chaos Errors Caught: ${chaosErrors} / ${chaosFiles.length}`);
+
+        // Verify empty thought filtering
+        const emptyThoughtRes = chaosParsed.find(p => p.name === "empty_thought.json");
+        if (emptyThoughtRes && emptyThoughtRes.conversation && emptyThoughtRes.conversation[0]) {
+            if (emptyThoughtRes.conversation[0].hasThoughts === false) {
+                console.log("PASS: Empty thought filtered correctly in Chaos Mode.");
+            } else {
+                console.error("FAIL: Empty thought NOT filtered in Chaos Mode.");
+            }
+        }
     } catch (e) {
         console.error("CRITICAL: Crash during generation", e);
     }

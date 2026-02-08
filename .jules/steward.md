@@ -13,3 +13,7 @@
 ## 2026-02-14 - [Bolt] - [Logic Extraction for Verification]
 **Insight:** Embedding complex logic (like markdown generation) inside React hooks makes it inaccessible to external verification scripts (e.g., stress tests) without fragile string parsing.
 **Protocol:** complex data transformation logic MUST be extracted into standalone pure functions outside the component to enable direct testing and benchmarking.
+
+## 2026-02-15 - [Palette] - [Empty Thought Noise]
+**Insight:** Empty "Thinking Process" blocks (whitespace only) degrade UX by displaying meaningless containers.
+**Protocol:** The parser MUST filter out any thought parts that contain only whitespace or are empty before adding them to the conversation object.
