@@ -116,7 +116,11 @@
                 for (const chunk of chunks) {
                     if (!chunk || typeof chunk !== 'object') continue;
 
-                    const role = chunk.role === 'model' ? 'Model' : 'User';
+                    // Enhance role detection: Map 'system' to 'System', 'model' to 'Model', others to 'User'
+                    let role = 'User';
+                    if (chunk.role === 'model') role = 'Model';
+                    else if (chunk.role === 'system') role = 'System';
+
                     let thoughts = [];
 
                     const contentParts = [];
@@ -148,7 +152,7 @@
                             thoughts: thoughts.join('\n\n'),
                             hasThoughts: thoughts.length > 0
                         });
-                            }
+                    }
                 }
 
                 return conversation;
@@ -170,7 +174,9 @@
                 parts.push('# Source: ', name, '\n\n');
 
                 for (const msg of conversation) {
-                    const roleIcon = msg.role === 'User' ? '👤' : '🤖';
+                    let roleIcon = '👤';
+                    if (msg.role === 'Model') roleIcon = '🤖';
+                    else if (msg.role === 'System') roleIcon = '⚙️';
 
                     if (includeThoughts && msg.hasThoughts) {
                         // Optimization: replace is ~2.6x faster than split/map/join
@@ -179,7 +185,7 @@
                     }
 
                     parts.push('## ', roleIcon, ' ', msg.role, '\n\n', msg.content, '\n\n---\n\n');
-                    }
+                }
             }
 
             return parts.join('');
@@ -287,7 +293,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.14</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.15</p>
                         </div>
 
                         {/* Main Grid */}
