@@ -1,6 +1,6 @@
 {
   "name": "ai-studio-cleaner",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "A lightweight, browser-based tool to parse and clean up exported chat history JSON files from Google AI Studio.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,14 @@
     "bench:markdown": "node benchmark_markdown_gen.js",
     "bench:icons": "node benchmark_icon_paths.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "ai-studio",
+    "gemini",
+    "export",
+    "markdown",
+    "converter",
+    "cleaner"
+  ],
+  "author": "shfqrkhn",
   "license": "MIT"
 }
