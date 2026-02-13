@@ -201,6 +201,7 @@ async function runSimulation() {
         { name: "missing_text.json", content: '{"chunks": [{"role": "user"}]}' }, // Missing parts/text
         { name: "null_part.json", content: '{"chunks": [{"role": "model", "parts": [null]}]}' },
         { name: "empty_thought.json", content: '{"chunks": [{"role": "model", "parts": [{"text": "   ", "thought": true}, {"text": "Hello"}]}]}' },
+        { name: "zero_text.json", content: '{"chunks": [{"role": "user", "text": 0}, {"role": "model", "parts": [{"text": 0}]}]}' }, // Falsy values (0)
         { name: "wrong_type.json", content: '{"chunks": "not_an_array"}' },
         { name: "mixed_validity.json", content: '{"chunks": [{"role": "user", "text": "ok"}, {"role": "model", "parts": "broken"}]}' }
     ];
@@ -236,6 +237,20 @@ async function runSimulation() {
             } else {
                 console.error("FAIL: Empty thought NOT filtered in Chaos Mode.");
             }
+        }
+
+        // Verify zero text preservation
+        const zeroRes = chaosParsed.find(p => p.name === "zero_text.json");
+        if (zeroRes && zeroRes.conversation && zeroRes.conversation.length === 2) {
+             const c1 = zeroRes.conversation[0];
+             const c2 = zeroRes.conversation[1];
+             if (String(c1.content) === "0" && String(c2.content) === "0") {
+                 console.log("PASS: Zero text preserved in Chaos Mode.");
+             } else {
+                 console.error(`FAIL: Zero text lost in Chaos Mode. Got: '${c1.content}', '${c2.content}'`);
+             }
+        } else {
+             console.error("FAIL: Zero text file not parsed or conversation empty.");
         }
     } catch (e) {
         console.error("CRITICAL: Crash during generation", e);

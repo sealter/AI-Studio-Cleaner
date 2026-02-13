@@ -17,3 +17,7 @@
 ## 2026-02-15 - [Palette] - [Empty Thought Noise]
 **Insight:** Empty "Thinking Process" blocks (whitespace only) degrade UX by displaying meaningless containers.
 **Protocol:** The parser MUST filter out any thought parts that contain only whitespace or are empty before adding them to the conversation object.
+
+## 2026-02-18 - [Sentinel] - [Falsy Text Data Loss]
+**Insight:** Using simple truthiness checks (e.g., `if (text)`) on content fields causes data loss for valid falsy values like `0` (number), which are critical for mathematical or code contexts.
+**Protocol:** Content validation MUST explicitly check for `undefined` or `null` (e.g., `if (text !== undefined && text !== null)`) instead of relying on implicit type coercion.
