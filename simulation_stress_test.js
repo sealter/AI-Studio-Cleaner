@@ -203,7 +203,8 @@ async function runSimulation() {
         { name: "empty_thought.json", content: '{"chunks": [{"role": "model", "parts": [{"text": "   ", "thought": true}, {"text": "Hello"}]}]}' },
         { name: "zero_text.json", content: '{"chunks": [{"role": "user", "text": 0}, {"role": "model", "parts": [{"text": 0}]}]}' }, // Falsy values (0)
         { name: "wrong_type.json", content: '{"chunks": "not_an_array"}' },
-        { name: "mixed_validity.json", content: '{"chunks": [{"role": "user", "text": "ok"}, {"role": "model", "parts": "broken"}]}' }
+        { name: "mixed_validity.json", content: '{"chunks": [{"role": "user", "text": "ok"}, {"role": "model", "parts": "broken"}]}' },
+        { name: "string_thought.json", content: '{"chunks": [{"role": "model", "parts": [{"thought": "String thought content", "text": null}, {"text": "Hello"}]}]}' }
     ];
 
     const chaosParsed = [];
@@ -251,6 +252,18 @@ async function runSimulation() {
              }
         } else {
              console.error("FAIL: Zero text file not parsed or conversation empty.");
+        }
+
+        // Verify string thought preservation
+        const stringThoughtRes = chaosParsed.find(p => p.name === "string_thought.json");
+        if (stringThoughtRes && stringThoughtRes.conversation && stringThoughtRes.conversation[0]) {
+             if (stringThoughtRes.conversation[0].hasThoughts === true && stringThoughtRes.conversation[0].thoughts === "String thought content") {
+                 console.log("PASS: String thought preserved in Chaos Mode.");
+             } else {
+                 console.error(`FAIL: String thought NOT preserved. Got: '${stringThoughtRes.conversation[0].thoughts}'`);
+             }
+        } else {
+             console.error("FAIL: String thought file not parsed.");
         }
     } catch (e) {
         console.error("CRITICAL: Crash during generation", e);
