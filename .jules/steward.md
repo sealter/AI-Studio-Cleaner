@@ -21,3 +21,9 @@
 ## 2026-02-18 - [Sentinel] - [Falsy Text Data Loss]
 **Insight:** Using simple truthiness checks (e.g., `if (text)`) on content fields causes data loss for valid falsy values like `0` (number), which are critical for mathematical or code contexts.
 **Protocol:** Content validation MUST explicitly check for `undefined` or `null` (e.g., `if (text !== undefined && text !== null)`) instead of relying on implicit type coercion.
+
+## 2026-02-16 - [Palette] - [Semantic Drift]
+**Protocol:** Toggle UI elements (switches) must use semantic `role="switch"` and `aria-checked`, not `button` + `aria-pressed`.
+
+## 2026-02-16 - [Hygiene] - [Artifact Decay]
+**Protocol:** Benchmark scripts must be actively referenced in `package.json`; unreferenced scripts are considered entropy and must be purged.
