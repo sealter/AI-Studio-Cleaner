@@ -219,8 +219,8 @@
                     }
                 }));
 
-                setParsedData(results);
-                setFiles(newFiles);
+                setParsedData(prev => [...prev, ...results]);
+                setFiles(prev => [...prev, ...newFiles]);
                 setIsProcessing(false);
             };
 
@@ -303,7 +303,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.20</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.21</p>
                         </div>
 
                         {/* Main Grid */}

@@ -4,7 +4,7 @@ This file provides guidance for AI assistants working with this codebase.
 
 ## Project Overview
 
-**AI Studio History Cleaner** (v1.2.16) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
+**AI Studio History Cleaner** (v1.2.21) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
 
 **Live Demo**: https://shfqrkhn.github.io/AI-Studio-Cleaner/
 
@@ -42,13 +42,11 @@ The entire application lives in `index.html` - a self-contained React app with n
 ├── LICENSE                 # MIT License
 ├── .jules/steward.md       # Known constraints and protocols
 │
-├── benchmark.js            # Sequential vs concurrent file processing
-├── benchmark_button.js     # Component style composition patterns
-├── benchmark_function_creation.js  # Static vs recreated function overhead
-├── benchmark_indentation.js        # Regex replace vs split/map/join
-├── benchmark_markdown_gen.js       # String concat vs array join
-├── benchmark_optimization.js       # Parser optimization comparison
-├── simulation_stress_test.js       # Large-scale stress testing (24-240 months)
+├── benchmark_icon_paths.js     # SVG path merging vs separate nodes
+├── benchmark_loop.js           # for..of vs forEach performance
+├── benchmark_markdown_gen.js   # String concat vs array join
+├── benchmark_optimization.js   # Parser optimization comparison
+├── simulation_stress_test.js   # Large-scale stress testing (24-240 months)
 │
 ├── {EAF9E830...}.png       # Screenshot for README
 ```
@@ -102,20 +100,14 @@ All benchmarks are Node.js scripts run from the terminal:
 # Core parsing performance
 node benchmark_optimization.js
 
-# UI component patterns
-node benchmark_button.js
-
-# String manipulation strategies
-node benchmark_indentation.js
+# Loop performance (forEach vs for..of)
+node benchmark_loop.js
 
 # Markdown generation strategies
 node benchmark_markdown_gen.js
 
-# Function creation overhead
-node benchmark_function_creation.js
-
-# Concurrent vs sequential file handling
-node benchmark.js
+# Icon path rendering optimization
+node benchmark_icon_paths.js
 
 # Full stress test (24, 60, 120, 240 months + chaos mode)
 node simulation_stress_test.js
