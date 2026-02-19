@@ -208,19 +208,27 @@
             const handleFiles = async (fileList) => {
                 setIsProcessing(true);
                 const newFiles = Array.from(fileList);
+                const BATCH_SIZE = 50;
 
-                const results = await Promise.all(newFiles.map(async (file) => {
-                    try {
-                        const text = await file.text();
-                        const conversation = parseAIStudioJSON(text);
-                        return { name: file.name, conversation, error: !conversation };
-                    } catch (e) {
-                        return { name: file.name, error: true };
-                    }
-                }));
+                for (let i = 0; i < newFiles.length; i += BATCH_SIZE) {
+                    const batch = newFiles.slice(i, i + BATCH_SIZE);
+                    const batchResults = await Promise.all(batch.map(async (file) => {
+                        try {
+                            const text = await file.text();
+                            const conversation = parseAIStudioJSON(text);
+                            return { name: file.name, conversation, error: !conversation };
+                        } catch (e) {
+                            return { name: file.name, error: true };
+                        }
+                    }));
 
-                setParsedData(prev => [...prev, ...results]);
-                setFiles(prev => [...prev, ...newFiles]);
+                    setParsedData(prev => [...prev, ...batchResults]);
+                    setFiles(prev => [...prev, ...batch]);
+
+                    // Yield to main thread to maintain UI responsiveness
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+
                 setIsProcessing(false);
             };
 
@@ -303,7 +311,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.21</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.22</p>
                         </div>
 
                         {/* Main Grid */}
