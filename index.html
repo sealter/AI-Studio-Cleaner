@@ -233,7 +233,7 @@
 
             const errorCount = useMemo(() => parsedData.filter(p => p.error).length, [parsedData]);
 
-            const handleFiles = async (fileList) => {
+            const handleFiles = useCallback(async (fileList) => {
                 setIsProcessing(true);
                 const newFiles = Array.from(fileList);
                 const BATCH_SIZE = 50;
@@ -262,33 +262,33 @@
                 }
 
                 setIsProcessing(false);
-            };
+            }, [includeThoughts]);
 
-            const handleToggleThoughts = () => {
+            const handleToggleThoughts = useCallback(() => {
                 if (isProcessing) return;
                 const newValue = !includeThoughts;
                 setIncludeThoughts(newValue);
                 setOutput(generateMarkdown(parsedData, newValue));
-            };
+            }, [isProcessing, includeThoughts, parsedData]);
 
-            const onDragEnter = (e) => { e.preventDefault(); e.stopPropagation(); setDragActive(true); };
-            const onDragLeave = (e) => { e.preventDefault(); e.stopPropagation(); setDragActive(false); };
-            const onDragOver = (e) => { e.preventDefault(); e.stopPropagation(); };
-            const onDrop = (e) => {
+            const onDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); setDragActive(true); }, []);
+            const onDragLeave = useCallback((e) => { e.preventDefault(); e.stopPropagation(); setDragActive(false); }, []);
+            const onDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
+            const onDrop = useCallback((e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setDragActive(false);
                 if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                     handleFiles(e.dataTransfer.files);
                 }
-            };
+            }, [handleFiles]);
 
-            const handleInputChange = (e) => {
+            const handleInputChange = useCallback((e) => {
                 if (e.target.files && e.target.files[0]) {
                     handleFiles(e.target.files);
                     e.target.value = ''; // Reset input to allow selecting the same file again
                 }
-            };
+            }, [handleFiles]);
 
             const handleClear = useCallback(() => {
                 setFiles([]);
@@ -349,7 +349,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.25</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.26</p>
                         </div>
 
                         {/* Main Grid */}
