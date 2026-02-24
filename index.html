@@ -264,11 +264,29 @@
                 setIsProcessing(false);
             }, [includeThoughts]);
 
-            const handleToggleThoughts = useCallback(() => {
+            const handleToggleThoughts = useCallback(async () => {
                 if (isProcessing) return;
+                setIsProcessing(true);
+
+                // Yield to allow UI update (show spinner)
+                await new Promise(resolve => setTimeout(resolve, 0));
+
                 const newValue = !includeThoughts;
                 setIncludeThoughts(newValue);
-                setOutput(generateMarkdown(parsedData, newValue));
+
+                let newOutput = '';
+                const BATCH_SIZE = 50;
+
+                for (let i = 0; i < parsedData.length; i += BATCH_SIZE) {
+                    const batch = parsedData.slice(i, i + BATCH_SIZE);
+                    newOutput += generateMarkdown(batch, newValue);
+
+                    // Yield to main thread to maintain responsiveness
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+
+                setOutput(newOutput);
+                setIsProcessing(false);
             }, [isProcessing, includeThoughts, parsedData]);
 
             const onDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); setDragActive(true); }, []);
@@ -278,17 +296,19 @@
                 e.preventDefault();
                 e.stopPropagation();
                 setDragActive(false);
+                if (isProcessing) return;
                 if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                     handleFiles(e.dataTransfer.files);
                 }
-            }, [handleFiles]);
+            }, [handleFiles, isProcessing]);
 
             const handleInputChange = useCallback((e) => {
+                if (isProcessing) return;
                 if (e.target.files && e.target.files[0]) {
                     handleFiles(e.target.files);
                     e.target.value = ''; // Reset input to allow selecting the same file again
                 }
-            }, [handleFiles]);
+            }, [handleFiles, isProcessing]);
 
             const handleClear = useCallback(() => {
                 setFiles([]);
@@ -349,7 +369,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.26</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.27</p>
                         </div>
 
                         {/* Main Grid */}
@@ -370,8 +390,9 @@
                                     <input
                                         type="file"
                                         multiple
-                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer touch-manipulation"
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer touch-manipulation disabled:cursor-not-allowed"
                                         onChange={handleInputChange}
+                                        disabled={isProcessing}
                                         accept=".json,.txt"
                                         aria-label="Upload AI Studio JSON export"
                                     />
