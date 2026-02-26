@@ -4,7 +4,7 @@ A lightweight, browser-based tool to parse and clean up exported chat history JS
 
 [**Live Demo**](https://shfqrkhn.github.io/AI-Studio-Cleaner/)
 
-![Screenshot](./%7BEAF9E830-864A-4D0A-B6C2-07893C46A4A3%7D.png)
+![Screenshot](./screenshot.png)
 
 ## 🚀 Features
 

@@ -44,13 +44,64 @@ const parseAIStudioJSON_Legacy = (json) => {
     }
 };
 
-// Current Implementation (for...of based, from index.html v1.2.21)
+// Current Implementation (v1.2.28 Logic)
 const parseAIStudioJSON_Current = (json) => {
     try {
         const data = JSON.parse(json);
         if (!data || typeof data !== 'object') return null;
 
         let conversation = [];
+
+        // Helper to extract content and thoughts from any message object (chunk or systemInstruction)
+        const extractContent = (item) => {
+            let thoughts = [];
+            let contentParts = [];
+
+            if (item.parts && Array.isArray(item.parts) && item.parts.length > 0) {
+                for (const part of item.parts) {
+                    if (!part || typeof part !== 'object') continue;
+
+                    if (part.thought || part.isThought) {
+                        let t = part.text;
+                        if ((t === undefined || t === null) && typeof part.thought === 'string') t = part.thought;
+                        const trimmed = (t !== undefined && t !== null ? String(t) : '').trim();
+                        if (trimmed) {
+                            thoughts.push(trimmed);
+                        }
+                    } else if (part.text !== undefined && part.text !== null) {
+                        contentParts.push(part.text);
+                    }
+                }
+            } else if (item.text !== undefined && item.text !== null) {
+                // Fallback to top-level text if parts are missing
+                contentParts.push(item.text);
+            }
+
+            const content = contentParts.join('').trim();
+            const thoughtsStr = thoughts.join('\n\n');
+            const hasThoughts = thoughts.length > 0;
+
+            return {
+                content,
+                thoughts: thoughtsStr,
+                hasThoughts,
+                isValid: (content.length > 0 || hasThoughts)
+            };
+        };
+
+        // Handle System Instruction (often at root or inside chunkedPrompt)
+        const sysInstruction = data.systemInstruction || data.chunkedPrompt?.systemInstruction;
+        if (sysInstruction) {
+            const { content, thoughts, hasThoughts, isValid } = extractContent(sysInstruction);
+            if (isValid) {
+                conversation.push({
+                    role: 'System',
+                    content,
+                    thoughts,
+                    hasThoughts
+                });
+            }
+        }
 
         // Handle standard AI Studio export format
         let chunks = data.chunkedPrompt?.chunks || data.chunks;
@@ -64,38 +115,14 @@ const parseAIStudioJSON_Current = (json) => {
             if (chunk.role === 'model') role = 'Model';
             else if (chunk.role === 'system') role = 'System';
 
-            let thoughts = [];
+            const { content, thoughts, hasThoughts, isValid } = extractContent(chunk);
 
-            const contentParts = [];
-
-            // Strategy: Prefer parts array if available to capture structure (thoughts vs content)
-            if (chunk.parts && Array.isArray(chunk.parts) && chunk.parts.length > 0) {
-                for (const part of chunk.parts) {
-                    if (!part || typeof part !== 'object') continue;
-
-                    if (part.thought || part.isThought) {
-                let t = part.text;
-                if (!t && typeof part.thought === 'string') t = part.thought;
-                const trimmed = (t || '').trim();
-                        if (trimmed) {
-                            thoughts.push(trimmed);
-                        }
-                    } else if (part.text !== undefined && part.text !== null) {
-                        contentParts.push(part.text);
-                    }
-                }
-            } else if (chunk.text !== undefined && chunk.text !== null) {
-                // Fallback to top-level text if parts are missing
-                contentParts.push(chunk.text);
-            }
-            const content = contentParts.join('');
-
-            if (content.trim() || thoughts.length > 0) {
+            if (isValid) {
                 conversation.push({
                     role,
-                    content: content.trim(),
-                    thoughts: thoughts.join('\n\n'),
-                    hasThoughts: thoughts.length > 0
+                    content,
+                    thoughts,
+                    hasThoughts
                 });
             }
         }
@@ -159,7 +186,7 @@ function runBenchmark() {
         if (legacyStr === currentStr) {
             console.log("✅ Verification Passed: Outputs are identical.");
         } else {
-            console.error("⚠️ Verification Warning: Outputs differ (likely due to logic enhancements in Current).");
+            console.error("⚠️ Verification Warning: Outputs differ (Expected, due to logic enhancements in Current).");
             // Inspect first difference? No, too large.
         }
     } else {
