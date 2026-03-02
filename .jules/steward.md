@@ -31,3 +31,7 @@
 ## 2026-02-18 - [Hygiene] - [Documentation Drift]
 **Insight:** `CLAUDE.md` file listings often drift from the actual repository state as files are added or removed.
 **Protocol:** Any file addition or deletion MUST be accompanied by an update to the "File Structure" section in `CLAUDE.md`.
+
+## 2026-03-02 - [Bolt] - [Object Retention Memory Leaks]
+**Insight:** Storing arrays of raw `File` objects in React state prevents garbage collection over thousands of uploads, creating a significant memory leak and violating performance mandates.
+**Protocol:** When only scalar metrics (like the total count of processed files) are needed for UI rendering, track that metric directly (e.g. `fileCount`) rather than retaining an array of raw objects.
