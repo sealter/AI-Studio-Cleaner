@@ -224,7 +224,7 @@
         const BATCH_SIZE = 500;
 
         function App() {
-            const [files, setFiles] = useState([]);
+            const [fileCount, setFileCount] = useState(0);
             const [parsedData, setParsedData] = useState([]);
             const [outputChunks, setOutputChunks] = useState([]); // Optimization: Array of strings instead of single string
             const [includeThoughts, setIncludeThoughts] = useState(false);
@@ -251,7 +251,7 @@
                     }));
 
                     setParsedData(prev => [...prev, ...batchResults]);
-                    setFiles(prev => [...prev, ...batch]);
+                    setFileCount(prev => prev + batch.length);
 
                     // Optimization: Incrementally append markdown chunks to prevent O(N^2)
                     const batchMarkdown = generateMarkdown(batchResults, includeThoughts);
@@ -310,7 +310,7 @@
             }, [handleFiles, isProcessing]);
 
             const handleClear = useCallback(() => {
-                setFiles([]);
+                setFileCount(0);
                 setParsedData([]);
                 setOutputChunks([]);
             }, []);
@@ -382,7 +382,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.29</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.30</p>
                         </div>
 
                         {/* Main Grid */}
@@ -438,9 +438,9 @@
                                     </p>
                                     <div className="pt-2 border-t border-slate-100">
                                         <div className="flex flex-col gap-2">
-                                            {files.length > 0 && (
+                                            {fileCount > 0 && (
                                                 <div className="text-sm text-slate-600 font-medium mb-2 flex justify-between items-center">
-                                                    <span>Processed {files.length} file(s)</span>
+                                                    <span>Processed {fileCount} file(s)</span>
                                                     {errorCount > 0 && (
                                                         <span className="text-red-600 font-bold text-xs bg-red-50 px-2 py-0.5 rounded-full border border-red-100">
                                                             {errorCount} Error{errorCount > 1 ? 's' : ''}
