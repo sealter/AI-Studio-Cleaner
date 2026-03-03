@@ -4,7 +4,7 @@ This file provides guidance for AI assistants working with this codebase.
 
 ## Project Overview
 
-**AI Studio History Cleaner** (v1.2.30) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
+**AI Studio History Cleaner** (v1.2.31) is a lightweight, browser-based tool that parses Google AI Studio JSON export files and converts them to clean, readable Markdown format. It supports optional inclusion of model "thinking/reasoning" blocks.
 
 **Live Demo**: https://shfqrkhn.github.io/AI-Studio-Cleaner/
 
@@ -39,6 +39,7 @@ The entire application lives in `index.html` - a self-contained React app with n
 ├── index.html              # Main application (React + Tailwind + Babel)
 ├── package.json            # Metadata only (no dependencies)
 ├── README.md               # User documentation
+├── CLAUDE.md               # AI context and instructions
 ├── LICENSE                 # MIT License
 ├── .jules/steward.md       # Known constraints and protocols
 │

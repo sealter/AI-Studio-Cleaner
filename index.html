@@ -382,7 +382,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.30</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.31</p>
                         </div>
 
                         {/* Main Grid */}
@@ -439,7 +439,7 @@
                                     <div className="pt-2 border-t border-slate-100">
                                         <div className="flex flex-col gap-2">
                                             {fileCount > 0 && (
-                                                <div className="text-sm text-slate-600 font-medium mb-2 flex justify-between items-center">
+                                                <div aria-live="polite" className="text-sm text-slate-600 font-medium mb-2 flex justify-between items-center">
                                                     <span>Processed {fileCount} file(s)</span>
                                                     {errorCount > 0 && (
                                                         <span className="text-red-600 font-bold text-xs bg-red-50 px-2 py-0.5 rounded-full border border-red-100">
@@ -484,10 +484,11 @@
                                             />
                                         )}
                                         {(!hasOutput || isProcessing) && (
-                                            <div className={`absolute inset-0 flex flex-col items-center justify-center text-slate-400 ${hasOutput ? 'z-10' : ''}`}>
+                                            <div aria-live="polite" aria-busy={isProcessing} className={`absolute inset-0 flex flex-col items-center justify-center text-slate-400 ${hasOutput ? 'z-10' : ''}`}>
                                                 <div className="bg-slate-50 p-4 rounded-full mb-3 shadow-sm">
                                                     <Icons.RefreshCw className={`w-6 h-6 ${isProcessing ? 'animate-spin text-blue-500' : ''}`} />
                                                 </div>
+                                                {isProcessing && <span className="sr-only">Processing...</span>}
                                                 {!hasOutput && <p>Upload a file to generate Markdown</p>}
                                             </div>
                                         )}
