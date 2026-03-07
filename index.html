@@ -225,14 +225,13 @@
 
         function App() {
             const [fileCount, setFileCount] = useState(0);
+            const [errorCount, setErrorCount] = useState(0); // Optimization: Standalone state to avoid O(N) recalculation
             const [parsedData, setParsedData] = useState([]);
             const [outputChunks, setOutputChunks] = useState([]); // Optimization: Array of strings instead of single string
             const [includeThoughts, setIncludeThoughts] = useState(false);
             const [isProcessing, setIsProcessing] = useState(false);
             const [dragActive, setDragActive] = useState(false);
             const [copySuccess, setCopySuccess] = useState(false);
-
-            const errorCount = useMemo(() => parsedData.filter(p => p.error).length, [parsedData]);
 
             const handleFiles = useCallback(async (fileList) => {
                 setIsProcessing(true);
@@ -250,8 +249,18 @@
                         }
                     }));
 
+                    let currentBatchErrors = 0;
+                    for (let j = 0; j < batchResults.length; j++) {
+                        if (batchResults[j].error) {
+                            currentBatchErrors++;
+                        }
+                    }
+
                     setParsedData(prev => [...prev, ...batchResults]);
                     setFileCount(prev => prev + batch.length);
+                    if (currentBatchErrors > 0) {
+                        setErrorCount(prev => prev + currentBatchErrors);
+                    }
 
                     // Optimization: Incrementally append markdown chunks to prevent O(N^2)
                     const batchMarkdown = generateMarkdown(batchResults, includeThoughts);
@@ -311,6 +320,7 @@
 
             const handleClear = useCallback(() => {
                 setFileCount(0);
+                setErrorCount(0);
                 setParsedData([]);
                 setOutputChunks([]);
             }, []);
@@ -382,7 +392,7 @@
                             <p className="text-slate-500 max-w-2xl mx-auto">
                                 Drag and drop your Google AI Studio export JSON files to extract a clean, readable Markdown chat history.
                             </p>
-                            <p className="text-xs text-slate-400 font-mono">v1.2.32</p>
+                            <p className="text-xs text-slate-400 font-mono">v1.2.33</p>
                         </div>
 
                         {/* Main Grid */}

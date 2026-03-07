@@ -35,3 +35,7 @@
 ## 2026-03-02 - [Bolt] - [Object Retention Memory Leaks]
 **Insight:** Storing arrays of raw `File` objects in React state prevents garbage collection over thousands of uploads, creating a significant memory leak and violating performance mandates.
 **Protocol:** When only scalar metrics (like the total count of processed files) are needed for UI rendering, track that metric directly (e.g. `fileCount`) rather than retaining an array of raw objects.
+
+## 2026-03-03 - [Bolt] - [O(N) Derived State in High-Frequency Batches]
+**Insight:** Using `useMemo` to derive a scalar value (e.g., `errorCount = parsedData.filter(p => p.error).length`) from an array that continuously grows during batch processing causes an O(N) operation on every render, severely degrading performance for large datasets.
+**Protocol:** When incrementally building a large dataset, standalone scalar metrics (like `errorCount`) MUST be tracked directly via state and updated incrementally, avoiding full array traversals.
